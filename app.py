@@ -13,7 +13,7 @@ MAX_TOKENS = 800
 
 # --- Helper functions ---
 
-# Protect English words (strike, names, etc.) so AI doesn't break them
+# Protect English words (strike, AI, names, etc.)
 def protect_english(text):
     words = re.findall(r"[A-Za-z]+", text)
     mapping = {w: f"<<{w}>>" for w in words}
@@ -27,9 +27,9 @@ def restore_english(text, mapping):
         text = text.replace(p, w)
     return text
 
-# Remove unwanted foreign/Cyrillic characters before translation
+# Remove unwanted foreign/Cyrillic characters
 def clean_text(text):
-    # keep English letters, numbers, common punctuation, and Urdu letters
+    # Keep English letters, Urdu letters, numbers, and basic punctuation
     return re.sub(r"[^a-zA-Z0-9\u0600-\u06FF\s,.!?']", " ", text).strip()
 
 
@@ -39,22 +39,20 @@ def eng_to_urdu(text):
     if not text.strip():
         return ""
 
-    text = clean_text(text)          # remove unwanted characters
+    text = clean_text(text)          # remove foreign characters
     safe_text, mapping = protect_english(text)
 
     prompt = f"""
 You are an expert professional translator.
 
 Rules (must follow strictly):
-- Translate ONLY. No explanations.
+- Translate ONLY into natural, fluent Urdu.
 - Preserve meaning exactly.
-- Do NOT break English words.
+- Do NOT transliterate foreign or non-English characters.
 - Keep English words if no proper Urdu equivalent.
 - Keep proper nouns in English.
 - Keep numbers unchanged.
-- Translate into natural, fluent Urdu — do NOT follow English word order literally.
-- Avoid awkward literal phrasing.
-- Correct grammar and punctuation.
+- Correct grammar, punctuation, and word order.
 
 English:
 {safe_text}
@@ -79,19 +77,18 @@ def urdu_to_eng(text):
     if not text.strip():
         return ""
 
-    text = clean_text(text)  # remove unwanted characters
+    text = clean_text(text)  # remove foreign characters
 
     prompt = f"""
 You are an expert professional translator.
 
 Rules (must follow strictly):
-- Translate ONLY. No explanations.
+- Translate ONLY into clear, natural English.
 - Preserve meaning exactly.
 - Keep English words unchanged.
 - Keep proper nouns unchanged.
 - Keep numbers unchanged.
-- Translate into clear, natural English.
-- Correct grammar and punctuation.
+- Correct grammar, punctuation, and word order.
 
 Urdu:
 {text}
