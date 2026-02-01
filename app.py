@@ -13,7 +13,7 @@ MAX_TOKENS = 800
 
 # --- Helper functions ---
 
-# Protect English words like "strike" or proper nouns
+# Protect English words (strike, names, etc.) so AI doesn't break them
 def protect_english(text):
     words = re.findall(r"[A-Za-z]+", text)
     mapping = {w: f"<<{w}>>" for w in words}
@@ -27,9 +27,10 @@ def restore_english(text, mapping):
         text = text.replace(p, w)
     return text
 
-# Remove non-English, unwanted characters
+# Remove unwanted foreign/Cyrillic characters before translation
 def clean_text(text):
-    return re.sub(r"[^a-zA-Z0-9\s,.!?']", " ", text).strip()
+    # keep English letters, numbers, common punctuation, and Urdu letters
+    return re.sub(r"[^a-zA-Z0-9\u0600-\u06FF\s,.!?']", " ", text).strip()
 
 
 # --- Translation functions ---
@@ -38,7 +39,7 @@ def eng_to_urdu(text):
     if not text.strip():
         return ""
 
-    text = clean_text(text)
+    text = clean_text(text)          # remove unwanted characters
     safe_text, mapping = protect_english(text)
 
     prompt = f"""
@@ -53,6 +54,7 @@ Rules (must follow strictly):
 - Keep numbers unchanged.
 - Translate into natural, fluent Urdu — do NOT follow English word order literally.
 - Avoid awkward literal phrasing.
+- Correct grammar and punctuation.
 
 English:
 {safe_text}
@@ -69,13 +71,15 @@ Urdu:
 
     result = completion.choices[0].message.content.strip()
     result = restore_english(result, mapping)
-    result = result.replace('"', '').replace("  ", " ")
+    result = result.replace('"', '').replace("  ", " ").strip()
     return result
 
 
 def urdu_to_eng(text):
     if not text.strip():
         return ""
+
+    text = clean_text(text)  # remove unwanted characters
 
     prompt = f"""
 You are an expert professional translator.
@@ -87,6 +91,7 @@ Rules (must follow strictly):
 - Keep proper nouns unchanged.
 - Keep numbers unchanged.
 - Translate into clear, natural English.
+- Correct grammar and punctuation.
 
 Urdu:
 {text}
@@ -102,7 +107,7 @@ English:
     )
 
     result = completion.choices[0].message.content.strip()
-    result = result.replace('"', '').replace("  ", " ")
+    result = result.replace('"', '').replace("  ", " ").strip()
     return result
 
 
@@ -134,7 +139,7 @@ with gr.Blocks() as demo:
     gr.Markdown("""
     ---
     🚀 Built with Gradio + Groq API  
-    Professional and highly accurate bilingual translation.
+    Professional, portfolio-ready bilingual translation.
     """)
 
 demo.launch(theme=gr.themes.Soft())
