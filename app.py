@@ -58,59 +58,35 @@ English:
     return completion.choices[0].message.content.strip()
 
 
-with gr.Blocks(theme=gr.themes.Soft()) as demo:
+with gr.Blocks() as demo:
 
     gr.Markdown("""
     # 🌍 AI Language Translator  
-    ### English ⇄ Urdu using Groq LLaMA 3.3  
-
-    Simple, fast, and accurate bidirectional translation powered by Groq.
+    ### English ⇄ Urdu (Powered by Groq LLaMA 3.3)
     """)
 
-    # -------- English to Urdu --------
-    with gr.Box():
-        gr.Markdown("## 🇬🇧 English → 🇵🇰 Urdu")
+    gr.Markdown("## 🇬🇧 English → 🇵🇰 Urdu")
 
-        eng_input = gr.Textbox(
-            label="Enter English Text",
-            placeholder="Type English here...",
-            lines=4,
-        )
+    eng_input = gr.Textbox(label="Enter English Text", lines=4)
+    urdu_output = gr.Textbox(label="Urdu Translation", lines=4)
+    eng_btn = gr.Button("Translate to Urdu")
 
-        urdu_output = gr.Textbox(
-            label="Urdu Translation",
-            lines=4,
-        )
-
-        eng_btn = gr.Button("Translate to Urdu")
-
-        eng_btn.click(fn=eng_to_urdu, inputs=eng_input, outputs=urdu_output)
+    eng_btn.click(fn=eng_to_urdu, inputs=eng_input, outputs=urdu_output)
 
     gr.Markdown("---")
 
-    # -------- Urdu to English --------
-    with gr.Box():
-        gr.Markdown("## 🇵🇰 Urdu → 🇬🇧 English")
+    gr.Markdown("## 🇵🇰 Urdu → 🇬🇧 English")
 
-        urdu_input = gr.Textbox(
-            label="اردو متن درج کریں",
-            placeholder="یہاں اردو لکھیں...",
-            lines=4,
-        )
+    urdu_input = gr.Textbox(label="اردو متن درج کریں", lines=4)
+    eng_output = gr.Textbox(label="English Translation", lines=4)
+    urdu_btn = gr.Button("Translate to English")
 
-        eng_output = gr.Textbox(
-            label="English Translation",
-            lines=4,
-        )
-
-        urdu_btn = gr.Button("Translate to English")
-
-        urdu_btn.click(fn=urdu_to_eng, inputs=urdu_input, outputs=eng_output)
+    urdu_btn.click(fn=urdu_to_eng, inputs=urdu_input, outputs=eng_output)
 
     gr.Markdown("""
     ---
-    ### 🚀 Powered by Groq + Gradio  
-    Built for fast, high-quality translation.
+    🚀 Built with Gradio + Groq API  
+    Fast, accurate bilingual translation.
     """)
 
-demo.launch()
+demo.launch(theme=gr.themes.Soft())
