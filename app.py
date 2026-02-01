@@ -7,7 +7,7 @@ from groq import Groq
 client = Groq(api_key=os.environ.get("translator"))
 
 MODEL = "llama-3.3-70b-versatile"
-TEMPERATURE = 0.01
+TEMPERATURE = 0.02
 MAX_TOKENS = 800
 
 
