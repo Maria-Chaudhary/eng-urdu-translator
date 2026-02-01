@@ -11,7 +11,9 @@ TEMPERATURE = 0.01
 MAX_TOKENS = 800
 
 
-# --- Helper to protect English words ---
+# --- Helper functions ---
+
+# Protect English words like "strike" or proper nouns
 def protect_english(text):
     words = re.findall(r"[A-Za-z]+", text)
     mapping = {w: f"<<{w}>>" for w in words}
@@ -20,18 +22,23 @@ def protect_english(text):
         safe_text = safe_text.replace(w, p)
     return safe_text, mapping
 
-
 def restore_english(text, mapping):
     for w, p in mapping.items():
         text = text.replace(p, w)
     return text
 
+# Remove non-English, unwanted characters
+def clean_text(text):
+    return re.sub(r"[^a-zA-Z0-9\s,.!?']", " ", text).strip()
+
 
 # --- Translation functions ---
+
 def eng_to_urdu(text):
     if not text.strip():
         return ""
 
+    text = clean_text(text)
     safe_text, mapping = protect_english(text)
 
     prompt = f"""
@@ -41,13 +48,11 @@ Rules (must follow strictly):
 - Translate ONLY. No explanations.
 - Preserve meaning exactly.
 - Do NOT break English words.
-- If a word has no proper Urdu equivalent, keep it in English.
+- Keep English words if no proper Urdu equivalent.
 - Keep proper nouns in English.
 - Keep numbers unchanged.
-- Do NOT invent spellings.
-- Do NOT split words.
-
-Translate English to Urdu.
+- Translate into natural, fluent Urdu — do NOT follow English word order literally.
+- Avoid awkward literal phrasing.
 
 English:
 {safe_text}
@@ -81,8 +86,7 @@ Rules (must follow strictly):
 - Keep English words unchanged.
 - Keep proper nouns unchanged.
 - Keep numbers unchanged.
-
-Translate Urdu to English.
+- Translate into clear, natural English.
 
 Urdu:
 {text}
@@ -130,7 +134,7 @@ with gr.Blocks() as demo:
     gr.Markdown("""
     ---
     🚀 Built with Gradio + Groq API  
-    Professional and accurate bilingual translation.
+    Professional and highly accurate bilingual translation.
     """)
 
 demo.launch(theme=gr.themes.Soft())
