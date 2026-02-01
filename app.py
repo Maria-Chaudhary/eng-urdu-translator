@@ -26,8 +26,8 @@ Urdu:
     completion = client.chat.completions.create(
         model=MODEL,
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.2,
-        max_tokens=500,
+        temperature=0.05,
+        max_tokens=800,
     )
 
     return completion.choices[0].message.content.strip()
