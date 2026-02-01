@@ -3,7 +3,7 @@ import gradio as gr
 from groq import Groq
 
 # Groq client (API key will come from HF Secrets)
-client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+client = Groq(api_key=os.environ.get("translator"))
 
 def translate(text):
     if not text.strip():
