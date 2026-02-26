@@ -10,5 +10,5 @@ pinned: false
 license: mit
 ---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
-chec the live Demo at: https://huggingface.co/spaces/Mariaaa123/eng-to-urdu
+Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference\n
+check the live Demo at: https://huggingface.co/spaces/Mariaaa123/eng-to-urdu
